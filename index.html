@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>הספרייה של גן דולב</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#fff9e8;
+  color:#4b321f;
+  direction:rtl;
+}
+
+.container{
+  max-width:720px;
+  margin:auto;
+  padding:22px;
+}
+
+.hero{
+  text-align:center;
+  padding:30px 15px 20px;
+}
+
+.hero h1{
+  font-size:40px;
+  margin:5px 0;
+  color:#5b3b20;
+}
+
+.hero p{
+  font-size:20px;
+  margin:8px 0;
+}
+
+.books{
+  font-size:55px;
+  margin:12px;
+}
+
+.card{
+  background:white;
+  border:2px solid #ead8aa;
+  border-radius:28px;
+  padding:24px;
+  margin:18px 0;
+  box-shadow:0 7px 0 #ead8aa;
+}
+
+.card h2{
+  margin-top:0;
+  font-size:27px;
+}
+
+.welcome{
+  background:#fff1b8;
+}
+
+.notice{
+  text-align:center;
+  font-size:20px;
+  line-height:1.7;
+}
+
+.bigButton{
+  width:100%;
+  border:none;
+  border-radius:22px;
+  padding:20px;
+  margin:10px 0;
+  font-size:22px;
+  font-weight:bold;
+  cursor:pointer;
+  background:#f2c94c;
+  color:#49331d;
+}
+
+.bigButton.secondary{
+  background:#dcefcf;
+}
+
+.adminButton{
+  background:white;
+  border:2px solid #ead8aa;
+}
+
+.section{
+  display:none;
+}
+
+.back{
+  background:#eee3c8;
+}
+
+label{
+  display:block;
+  margin-top:16px;
+  margin-bottom:6px;
+  font-weight:bold;
+}
+
+input,select{
+  width:100%;
+  padding:16px;
+  border-radius:16px;
+  border:2px solid #e3d5b2;
+  font-size:18px;
+  background:white;
+}
+
+.children{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  margin:15px 0;
+}
+
+.child{
+  border:2px solid #ead8aa;
+  border-radius:18px;
+  background:#fffaf0;
+  padding:10px 4px;
+  text-align:center;
+  cursor:pointer;
+}
+
+.child.selected{
+  background:#f7d85b;
+  border-color:#b88a16;
+}
+
+.avatar{
+  font-size:34px;
+}
+
+.childName{
+  font-size:14px;
+  margin-top:5px;
+}
+
+.message{
+  background:#eef7e8;
+  padding:15px;
+  border-radius:15px;
+  margin-top:15px;
+  display:none;
+  text-align:center;
+  font-weight:bold;
+}
+
+.footer{
+  text-align:center;
+  padding:30px 10px;
+  color:#806d53;
+  font-size:14px;
+}
+
+@media(max-width:500px){
+  .children{grid-template-columns:repeat(3,1fr)}
+  .hero h1{font-size:34px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div id="home">
+
+  <div class="hero">
+    <div class="books">📚</div>
+    <h1>הספרייה של גן דולב</h1>
+    <p>כאן מתחילים סיפורים ✨</p>
+  </div>
+
+  <div class="card welcome">
+    <h2>📖 הספרייה שלנו</h2>
+    <div class="notice">
+      בוחרים ספר, לוקחים הביתה,<br>
+      קוראים יחד ומחזירים לגן ❤️
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>מי בא להחליף ספר?</h2>
+    <p>בחרו את הילד או הילדה והמשיכו להשאלה.</p>
+
+    <button class="bigButton" onclick="openBorrow()">
+      📚 השאלת ספר
+    </button>
+
+    <button class="bigButton secondary" onclick="openReturn()">
+      ↩️ החזרת ספר
+    </button>
+  </div>
+
+  <button class="bigButton adminButton" onclick="openAdmin()">
+    🔒 אזור הגננת
+  </button>
+
+</div>
+
+
+<div id="borrow" class="section">
+
+  <div class="card">
+    <h2>📚 השאלת ספר</h2>
+    <p>מי לוקח היום ספר הביתה?</p>
+
+    <div class="children" id="childrenBorrow"></div>
+
+    <label>שם הספר</label>
+    <input id="bookName" placeholder="כתבו את שם הספר">
+
+    <button class="bigButton" onclick="saveBorrow()">
+      השאלת הספר ✓
+    </button>
+
+    <div id="borrowMessage" class="message">
+      הספר נרשם בהצלחה 🌟<br>
+      קריאה נעימה!
+    </div>
+
+    <button class="bigButton back" onclick="goHome()">חזרה</button>
+  </div>
+
+</div>
+
+
+<div id="returnBook" class="section">
+
+  <div class="card">
+    <h2>↩️ החזרת ספר</h2>
+    <p>מי מחזיר היום ספר?</p>
+
+    <div class="children" id="childrenReturn"></div>
+
+    <button class="bigButton secondary" onclick="saveReturn()">
+      הספר חזר לגן ✓
+    </button>
+
+    <div id="returnMessage" class="message">
+      תודה שהחזרתם את הספר ❤️
+    </div>
+
+    <button class="bigButton back" onclick="goHome()">חזרה</button>
+  </div>
+
+</div>
+
+
+<div id="admin" class="section">
+
+  <div class="card">
+    <h2>🔒 אזור הגננת</h2>
+
+    <label>סיסמה</label>
+    <input type="password" id="password" placeholder="הקלידי סיסמה">
+
+    <button class="bigButton" onclick="login()">כניסה</button>
+
+    <div id="adminContent" style="display:none">
+      <hr>
+      <h2>ניהול הספרייה</h2>
+      <p>כאן נוכל בהמשך לראות מי השאיל ספר, מי החזיר, ולהוסיף את רשימת הספרים.</p>
+    </div>
+
+    <button class="bigButton back" onclick="goHome()">חזרה</button>
+  </div>
+
+</div>
+
+
+<div class="footer">
+  גן דולב • הספרייה שלנו 📖
+</div>
+
+</div>
+
+
+<script>
+
+const children=[
+"אביב שלמה","איתמר","אלון","אדר","איילון","אורי","אלי",
+"אריאל","אמירי","אביב","איתן","אלול","ארייה","אלמוג",
+"יובל","תום","דויד","מישל","גידי","גילי","גל",
+"רעות","קארין","נעמי","ניב","לילי","לביא","יובל",
+"ג'ונה","מיכאל","ניאור","בר","שקד","שני","רוי"
+];
+
+let selectedBorrow="";
+let selectedReturn="";
+
+function createChildren(){
+
+ let b=document.getElementById("childrenBorrow");
+ let r=document.getElementById("childrenReturn");
+
+ children.forEach((name,index)=>{
+
+   let c1=document.createElement("div");
+   c1.className="child";
+   c1.innerHTML='<div class="avatar">📖</div><div class="childName">'+name+'</div>';
+   c1.onclick=function(){
+      document.querySelectorAll("#childrenBorrow .child").forEach(x=>x.classList.remove("selected"));
+      c1.classList.add("selected");
+      selectedBorrow=name;
+   };
+   b.appendChild(c1);
+
+   let c2=document.createElement("div");
+   c2.className="child";
+   c2.innerHTML='<div class="avatar">📚</div><div class="childName">'+name+'</div>';
+   c2.onclick=function(){
+      document.querySelectorAll("#childrenReturn .child").forEach(x=>x.classList.remove("selected"));
+      c2.classList.add("selected");
+      selectedReturn=name;
+   };
+   r.appendChild(c2);
+
+ });
+
+}
+
+function hideAll(){
+ document.getElementById("home").style.display="none";
+ document.getElementById("borrow").style.display="none";
+ document.getElementById("returnBook").style.display="none";
+ document.getElementById("admin").style.display="none";
+}
+
+function goHome(){
+ hideAll();
+ document.getElementById("home").style.display="block";
+ window.scrollTo(0,0);
+}
+
+function openBorrow(){
+ hideAll();
+ document.getElementById("borrow").style.display="block";
+ window.scrollTo(0,0);
+}
+
+function openReturn(){
+ hideAll();
+ document.getElementById("returnBook").style.display="block";
+ window.scrollTo(0,0);
+}
+
+function openAdmin(){
+ hideAll();
+ document.getElementById("admin").style.display="block";
+ window.scrollTo(0,0);
+}
+
+function saveBorrow(){
+
+ if(!selectedBorrow){
+   alert("בחרו ילד או ילדה");
+   return;
+ }
+
+ let book=document.getElementById("bookName").value;
+
+ if(!book){
+   alert("כתבו את שם הספר");
+   return;
+ }
+
+ let loans=JSON.parse(localStorage.getItem("dolevLoans")||"[]");
+
+ loans.push({
+   child:selectedBorrow,
+   book:book,
+   date:new Date().toLocaleDateString("he-IL")
+ });
+
+ localStorage.setItem("dolevLoans",JSON.stringify(loans));
+
+ document.getElementById("borrowMessage").style.display="block";
+}
+
+function saveReturn(){
+
+ if(!selectedReturn){
+   alert("בחרו ילד או ילדה");
+   return;
+ }
+
+ document.getElementById("returnMessage").style.display="block";
+}
+
+function login(){
+
+ let p=document.getElementById("password").value;
+
+ if(p==="1234"){
+   document.getElementById("adminContent").style.display="block";
+ }else{
+   alert("סיסמה לא נכונה");
+ }
+
+}
+
+createChildren();
+
+</script>
+
+</body>
+</html>
